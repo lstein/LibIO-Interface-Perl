@@ -1,4 +1,6 @@
 Revision history for Perl extension IO::Interface.
+0.98	Sep 03 18:20:20 EST 2003
+	Fixed minor documentation error.
 
 0.97	May 14 16:50:46 EDT 2001
 	BSD portability fixes from Anton Berezin <tobez@tobez.org> and Jan L. Peterson <jlp@flipdog.com>
