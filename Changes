@@ -1,0 +1,18 @@
+Revision history for Perl extension IO::Interface.
+
+0.97	May 14 16:50:46 EDT 2001
+	BSD portability fixes from Anton Berezin <tobez@tobez.org> and Jan L. Peterson <jlp@flipdog.com>
+
+0.96    May  7 10:44:48 EDT 2001
+	Documentation fixes
+
+0.94	July 17, 2000
+	Added the addr_to_interface function, and the pseudo device "any"
+		which corresponds to INADDR_ANY
+
+0.90	First release
+
+0.01  Thu May  4 08:28:45 2000
+	- original version; created by h2xs 1.20 with options
+		-n IO::Interface /usr/include/net/if.h
+
