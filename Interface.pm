@@ -28,7 +28,7 @@ my @flags     = qw(IFF_ALLMULTI    IFF_AUTOMEDIA  IFF_BROADCAST
 @EXPORT = qw( );
 
 @ISA = qw(Exporter DynaLoader);
-$VERSION = '1.01';
+$VERSION = '1.02';
 
 sub AUTOLOAD {
     # This AUTOLOAD is used to 'autoload' constants from the constant()
@@ -101,18 +101,18 @@ IO::Interface - Perl extension for access to network card configuration informat
  my $if2   = IO::Interface::Simple->new_from_address('127.0.0.1');
  my $if3   = IO::Interface::Simple->new_from_index(1);
 
- my @interfaces = $IO::Interface::Simple->interfaces;
+ my @interfaces = IO::Interface::Simple->interfaces;
 
  for my $if (@interfaces) {
     print "interface = $if\n";
-    print "addr =      ",$s->address,"\n",
-          "broadcast = ",$s->broadcast,"\n",
-          "netmask =   ",$s->netmask,"\n",
-          "dstaddr =   ",$s->dstaddr,"\n",
-          "hwaddr =    ",$s->hwaddr,"\n",
-          "mtu =       ",$s->mtu,"\n",
-          "metric =    ",$s->metric,"\n",
-          "index =     ",$s->index,"\n";
+    print "addr =      ",$if->address,"\n",
+          "broadcast = ",$if->broadcast,"\n",
+          "netmask =   ",$if->netmask,"\n",
+          "dstaddr =   ",$if->dstaddr,"\n",
+          "hwaddr =    ",$if->hwaddr,"\n",
+          "mtu =       ",$if->mtu,"\n",
+          "metric =    ",$if->metric,"\n",
+          "index =     ",$if->index,"\n";
 
     print "is running\n"     if $if->is_running;
     print "is broadcast\n"   if $if->is_broadcast;
