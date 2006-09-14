@@ -1,4 +1,9 @@
 Revision history for Perl extension IO::Interface.
+1.00	Wed Sep 13 17:01:46 EDT 2006
+        Introduced IO::Interface::Simple.
+        Added index methods.
+	Compiles on CygWin.
+
 0.98	Sep 03 18:20:20 EST 2003
 	Fixed minor documentation error.
 

@@ -401,7 +401,11 @@ if_addr(sock, name, ...)
 	 newaddr = SvPV(ST(2),len);
 	 if ( inet_aton(newaddr,&((struct sockaddr_in*)&ifr.ifr_addr)->sin_addr) == 0 ) 
 	   croak("Invalid inet address");
-	 operation = SIOCSIFADDR; 
+#if defined(SIOCSIFADDR)
+	 operation = SIOCSIFADDR;
+#else
+	 croak("Cannot set interface address on this platform");
+#endif
        } else {
 	 operation = SIOCGIFADDR;
        }
@@ -436,7 +440,11 @@ if_broadcast(sock, name, ...)
        newaddr = SvPV(ST(2),len);
        if ( inet_aton(newaddr,&((struct sockaddr_in*)&ifr.ifr_addr)->sin_addr) == 0 ) 
 	 croak("Invalid inet address");
-         operation = SIOCSIFBRDADDR; 
+#if defined(SIOCSIFBRDADDR)
+         operation = SIOCSIFBRDADDR;
+#else
+         croak("Cannot set broadcast address on this platform");
+#endif 
      } else {
 	  operation = SIOCGIFBRDADDR;
      }
@@ -470,7 +478,11 @@ if_netmask(sock, name, ...)
        newaddr = SvPV(ST(2),len);
        if ( inet_aton(newaddr,&((struct sockaddr_in*)&ifr.ifr_addr)->sin_addr) == 0 ) 
 	 croak("Invalid inet address");
+#if defined(SIOCSIFNETMASK)
          operation = SIOCSIFNETMASK; 
+#else
+         croak("Cannot set netmask on this platform");
+#endif
      } else {
 	  operation = SIOCGIFNETMASK;
      }
@@ -504,7 +516,11 @@ if_dstaddr(sock, name, ...)
        newaddr = SvPV(ST(2),len);
        if ( inet_aton(newaddr,&((struct sockaddr_in*)&ifr.ifr_addr)->sin_addr) == 0 ) 
 	 croak("Invalid inet address");
+#if defined(SIOCSIFDSTADDR)
        operation = SIOCSIFDSTADDR;
+#else
+       croak("Cannot set destination address on this platform");
+#endif
      } else {
        operation = SIOCGIFDSTADDR;
      }
@@ -538,7 +554,11 @@ if_hwaddr(sock, name, ...)
        newaddr = SvPV(ST(2),len);
        if (parse_hwaddr(newaddr,&ifr.ifr_hwaddr) == NULL)
 	 croak("Invalid hardware address");
+#if defined(SIOCSIFHWADDR)
        operation = SIOCSIFHWADDR;
+#else
+       croak("Cannot set hw address on this platform");
+#endif
      } else {
        operation = SIOCGIFHWADDR;
      }
@@ -566,12 +586,112 @@ if_flags(sock, name, ...)
      strncpy(ifr.ifr_name,name,IFNAMSIZ-1);
      if (items > 2) {
        ifr.ifr_flags = SvIV(ST(2));
+#if defined(SIOCSIFFLAGS)
        operation = SIOCSIFFLAGS;
+#else
+       croak("Cannot set flags on this platform.");
+#endif
      } else {
        operation = SIOCGIFFLAGS;
      }
      if (!Ioctl(sock,operation,&ifr)) XSRETURN_UNDEF;
      RETVAL = ifr.ifr_flags;
+   }
+   OUTPUT:
+     RETVAL
+
+int
+if_mtu(sock, name, ...)
+     InputStream sock
+     char*       name
+     PROTOTYPE: $$;$
+     PREINIT:
+     int            operation,flags;
+     struct ifreq   ifr;
+     CODE:
+   {
+#if !(defined(HAS_IOCTL) && defined(SIOCGIFFLAGS))
+     XSRETURN_UNDEF;
+#endif
+     bzero((void*)&ifr,sizeof(struct ifreq));
+     strncpy(ifr.ifr_name,name,IFNAMSIZ-1);
+     if (items > 2) {
+       ifr.ifr_flags = SvIV(ST(2));
+#if defined(SIOCSIFMTU)
+       operation = SIOCSIFMTU;
+#else
+	 croak("Cannot set MTU on this platform.");
+#endif
+     } else {
+       operation = SIOCGIFMTU;
+     }
+     if (!Ioctl(sock,operation,&ifr)) XSRETURN_UNDEF;
+     RETVAL = ifr.ifr_mtu;
+   }
+   OUTPUT:
+     RETVAL
+
+int
+if_metric(sock, name, ...)
+     InputStream sock
+     char*       name
+     PROTOTYPE: $$;$
+     PREINIT:
+     int            operation,flags;
+     struct ifreq   ifr;
+     CODE:
+   {
+#if !(defined(HAS_IOCTL) && defined(SIOCGIFFLAGS))
+     XSRETURN_UNDEF;
+#endif
+     bzero((void*)&ifr,sizeof(struct ifreq));
+     strncpy(ifr.ifr_name,name,IFNAMSIZ-1);
+     if (items > 2) {
+       ifr.ifr_flags = SvIV(ST(2));
+#if defined(SIOCSIFMETRIC)
+       operation = SIOCSIFMETRIC;
+#else
+	 croak("Cannot set metric on this platform.");
+#endif
+     } else {
+       operation = SIOCGIFMETRIC;
+     }
+     if (!Ioctl(sock,operation,&ifr)) XSRETURN_UNDEF;
+     RETVAL = ifr.ifr_metric;
+   }
+   OUTPUT:
+     RETVAL
+
+int
+if_index(sock, name, ...)
+     InputStream sock
+     char*       name
+     PROTOTYPE: $$;$
+     CODE:
+   {
+#ifdef __USE_BSD
+     RETVAL = if_nametoindex(name);
+#else
+     XSRETURN_UNDEF;
+#endif
+   }
+   OUTPUT:
+     RETVAL
+
+char*
+if_indextoname(sock, index, ...)
+     InputStream sock
+     int   index
+     PROTOTYPE: $$;$
+     PREINIT:
+     char  name[IFNAMSIZ];
+     CODE:
+   {
+#ifdef __USE_BSD
+     RETVAL = if_indextoname(index,name);
+#else
+    XSRETURN_UNDEF;
+#endif
    }
    OUTPUT:
      RETVAL
@@ -624,3 +744,4 @@ _if_list(sock)
        }
        safefree(buf);
 #endif
+

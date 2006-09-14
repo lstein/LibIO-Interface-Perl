@@ -5,11 +5,14 @@ use strict;
 use Carp;
 use vars qw(@EXPORT @EXPORT_OK @ISA %EXPORT_TAGS $VERSION $AUTOLOAD);
 
+use IO::Socket;
+
 require Exporter;
 require DynaLoader;
 use AutoLoader;
 
-my @functions = qw(if_addr if_broadcast if_netmask if_dstaddr if_hwaddr if_flags if_list addr_to_interface);
+my @functions = qw(if_addr if_broadcast if_netmask if_dstaddr if_hwaddr if_flags if_list if_mtu if_metric
+		   addr_to_interface if_index if_indextoname );
 my @flags     = qw(IFF_ALLMULTI    IFF_AUTOMEDIA  IFF_BROADCAST
 		   IFF_DEBUG       IFF_LOOPBACK   IFF_MASTER
 		   IFF_MULTICAST   IFF_NOARP      IFF_NOTRAILERS
@@ -25,7 +28,7 @@ my @flags     = qw(IFF_ALLMULTI    IFF_AUTOMEDIA  IFF_BROADCAST
 @EXPORT = qw( );
 
 @ISA = qw(Exporter DynaLoader);
-$VERSION = '0.98';
+$VERSION = '1.00';
 
 sub AUTOLOAD {
     # This AUTOLOAD is used to 'autoload' constants from the constant()
@@ -72,13 +75,13 @@ sub addr_to_interface {
   return "any" if $addr eq '0.0.0.0';
   my @interfaces = $sock->if_list;
   foreach (@interfaces) {
-    return $_ if $sock->if_addr($_) eq $addr;
+    my $if_addr = $sock->if_addr($_) or next;
+    return $_ if $if_addr eq $addr;
   }
   return;  # couldn't find it
 }
 
 # Autoload methods go after =cut, and are processed by the autosplit program.
-
 1;
 __END__
 
@@ -87,6 +90,44 @@ __END__
 IO::Interface - Perl extension for access to network card configuration information
 
 =head1 SYNOPSIS
+
+ # ======================
+ # the new, preferred API
+ # ======================
+
+ use IO::Interface::Simple;
+
+ my $if1   = IO::Interface::Simple->new('eth0');
+ my $if2   = IO::Interface::Simple->new_from_address('127.0.0.1');
+ my $if3   = IO::Interface::Simple->new_from_index(1);
+
+ my @interfaces = $IO::Interface::Simple->interfaces;
+
+ for my $if (@interfaces) {
+    print "interface = $if\n";
+    print "addr =      ",$s->address,"\n",
+          "broadcast = ",$s->broadcast,"\n",
+          "netmask =   ",$s->netmask,"\n",
+          "dstaddr =   ",$s->dstaddr,"\n",
+          "hwaddr =    ",$s->hwaddr,"\n",
+          "mtu =       ",$s->mtu,"\n",
+          "metric =    ",$s->metric,"\n",
+          "index =     ",$s->index,"\n";
+
+    print "is running\n"     if $if->is_running;
+    print "is broadcast\n"   if $if->is_broadcast;
+    print "is p-to-p\n"      if $if->is_pt2pt;
+    print "is loopback\n"    if $if->is_loopback;
+    print "is promiscuous\n" if $if->is_promiscuous;
+    print "is multicast\n"   if $if->is_multicast;
+    print "is notrailers\n"  if $if->is_notrailers;
+    print "is noarp\n"       if $if->is_noarp;
+  }
+
+
+  # ===========
+  # the old API
+  # ===========
 
   use IO::Socket;
   use IO::Interface qw(:flags);
@@ -112,7 +153,7 @@ IO::Interface - Perl extension for access to network card configuration informat
     print "is notrailers\n"  if $flags & IFF_NOTRAILERS;
     print "is noarp\n"       if $flags & IFF_NOARP;
   }
-  
+
   my $interface = $s->addr_to_interface('127.0.0.1');
 
 

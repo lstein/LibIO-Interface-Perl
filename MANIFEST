@@ -2,8 +2,9 @@ Changes
 README
 Interface.pm
 Interface.xs
+Interface/Simple.pm
 MANIFEST
 Makefile.PL
 t/basic.t
-
+t/simple.t
 META.yml                                 Module meta-data (added by MakeMaker)

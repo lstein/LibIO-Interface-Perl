@@ -9,6 +9,7 @@ WriteMakefile(
     'VERSION_FROM' => 'Interface.pm', # finds $VERSION
     'LIBS'	=> ["@libs"],   # e.g., '-lm' 
     'INC'	=> '',     # e.g., '-I/usr/include/other' 
+    PMLIBDIRS   => ['Interface'],
     CONFIGURE	=> sub {
         my %attrs;
         print "Checking for getifaddrs()...";
