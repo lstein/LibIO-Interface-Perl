@@ -28,7 +28,7 @@ my @flags     = qw(IFF_ALLMULTI    IFF_AUTOMEDIA  IFF_BROADCAST
 @EXPORT = qw( );
 
 @ISA = qw(Exporter DynaLoader);
-$VERSION = '1.00';
+$VERSION = '1.01';
 
 sub AUTOLOAD {
     # This AUTOLOAD is used to 'autoload' constants from the constant()
@@ -164,6 +164,9 @@ be used to retrieve and change information about the network
 interfaces on your system.  In addition to the object-oriented access
 methods, you can use a function-oriented style.
 
+THIS API IS DEPRECATED. Please see L<IO::Interface::Simple> for the
+preferred way to get and set interface configuration information.
+
 =head2 Creating a Socket to Access Interface Information
 
 You must create a socket before you can access interface
@@ -288,6 +291,6 @@ This module is distributed under the same license as Perl itself.
 
 =head1 SEE ALSO
 
-perl(1), IO::Socket(3), IO::Multicast(3)
+perl(1), IO::Socket(3), IO::Multicast(3), L<IO::Interface::Simple>
 
 =cut
