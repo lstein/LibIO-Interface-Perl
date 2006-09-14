@@ -33,6 +33,15 @@ typedef FILE * InputStream;
 #define PerlIO_fileno(f) fileno(f)
 #endif
 
+#if !defined(__USE_BSD)
+  #if defined(__linux__)
+     #define __USE_BSD
+  #endif
+  #if defined (__APPLE__)
+     #define __USE_BSD
+  #endif
+#endif
+
 static double
 constant_IFF_N(char *name, int len, int arg)
 {
