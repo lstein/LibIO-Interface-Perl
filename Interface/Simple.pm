@@ -133,12 +133,11 @@ sub _gettestflag {
 
 =head1 NAME
 
-IO::Interface - Perl extension for access to network card configuration information
+IO::Interface::Simple - Perl extension for access to network card configuration information
 
 =head1 SYNOPSIS
 
  use IO::Interface::Simple;
-
 
  my $if1   = IO::Interface::Simple->new('eth0');
  my $if2   = IO::Interface::Simple->new_from_address('127.0.0.1');

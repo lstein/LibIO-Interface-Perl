@@ -1,4 +1,7 @@
 Revision history for Perl extension IO::Interface.
+1.03	Mon Jan 22 16:38:24 EST 2007
+	Fix to compile cleanly on solaris systems.	
+
 1.02	Thu Sep 14 08:54:04 EDT 2006
 	More documentation fixes.
 

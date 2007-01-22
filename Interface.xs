@@ -42,6 +42,10 @@ typedef FILE * InputStream;
   #endif
 #endif
 
+#if defined(sun)
+#define ifr_mtu ifr_metric 
+#endif 
+
 static double
 constant_IFF_N(char *name, int len, int arg)
 {
