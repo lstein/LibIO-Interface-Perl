@@ -35,14 +35,20 @@ typedef FILE * InputStream;
 
 #if !defined(__USE_BSD)
   #if defined(__linux__)
+     typedef int IOCTL_CMD_T;
      #define __USE_BSD
-  #endif
-  #if defined (__APPLE__)
+  #elif defined(__APPLE__)
+     typedef unsigned long IOCTL_CMD_T;
      #define __USE_BSD
+  #else
+     typedef int IOCTL_CMD_T;
   #endif
+#else
+  typedef unsigned long IOCTL_CMD_T;
 #endif
 
-#if defined(sun)
+/* HP-UX, Solaris */
+#if !defined(ifr_mtu) && defined(ifr_metric)
 #define ifr_mtu ifr_metric 
 #endif 
 
@@ -330,7 +336,7 @@ not_there:
     return 0;
 }
 
-int Ioctl (InputStream sock,int operation,void* result) {
+int Ioctl (InputStream sock, IOCTL_CMD_T operation,void* result) {
   int fd = PerlIO_fileno(sock);
   return ioctl(fd,operation,result) == 0;
 }
@@ -396,7 +402,7 @@ if_addr(sock, name, ...)
      PROTOTYPE: $$;$
      PREINIT:
      STRLEN        len;
-     int           operation;
+     IOCTL_CMD_T   operation;
      struct ifreq  ifr;
      char*         newaddr;
      CODE:
@@ -438,7 +444,7 @@ if_broadcast(sock, name, ...)
      PROTOTYPE: $$;$
      PREINIT:
      STRLEN        len;
-     int           operation;
+     IOCTL_CMD_T   operation;
      struct ifreq  ifr;
      char*         newaddr;
      CODE:
@@ -476,7 +482,7 @@ if_netmask(sock, name, ...)
      PROTOTYPE: $$;$
      PREINIT:
      STRLEN         len;
-     int            operation;
+     IOCTL_CMD_T    operation;
      struct ifreq   ifr;
      char*          newaddr;
      CODE:
@@ -514,7 +520,7 @@ if_dstaddr(sock, name, ...)
      PROTOTYPE: $$;$
      PREINIT:
      STRLEN         len;
-     int            operation;
+     IOCTL_CMD_T    operation;
      struct ifreq   ifr;
      char*          newaddr;
      CODE:
@@ -552,7 +558,7 @@ if_hwaddr(sock, name, ...)
      PROTOTYPE: $$;$
      PREINIT:
      STRLEN	    len;
-     int            operation;
+     IOCTL_CMD_T    operation;
      struct ifreq   ifr;
      char           *newaddr,hwaddr[128];
      CODE:
@@ -588,7 +594,8 @@ if_flags(sock, name, ...)
      char*       name
      PROTOTYPE: $$;$
      PREINIT:
-     int            operation,flags;
+     IOCTL_CMD_T    operation;
+     int            flags;
      struct ifreq   ifr;
      CODE:
    {
@@ -619,7 +626,8 @@ if_mtu(sock, name, ...)
      char*       name
      PROTOTYPE: $$;$
      PREINIT:
-     int            operation,flags;
+     IOCTL_CMD_T    operation;
+     int            flags;
      struct ifreq   ifr;
      CODE:
    {
@@ -650,7 +658,8 @@ if_metric(sock, name, ...)
      char*       name
      PROTOTYPE: $$;$
      PREINIT:
-     int            operation,flags;
+     IOCTL_CMD_T    operation;
+     int            flags;
      struct ifreq   ifr;
      CODE:
    {
