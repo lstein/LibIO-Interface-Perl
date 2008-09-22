@@ -13,6 +13,11 @@
 /* location of getifaddrs() definition */
 #ifdef USE_GETIFADDRS
 #include <ifaddrs.h>
+
+#ifdef  HAVE_SOCKADDR_DL_STRUCT
+#include <net/if_dl.h>
+#endif
+
 #endif
 
 #ifndef SIOCGIFCONF
@@ -560,12 +565,51 @@ if_hwaddr(sock, name, ...)
      STRLEN	    len;
      IOCTL_CMD_T    operation;
      struct ifreq   ifr;
+#if (defined(USE_GETIFADDRS) && defined(HAVE_SOCKADDR_DL_STRUCT))
+     struct ifaddrs* ifap = NULL;
+     struct sockaddr_dl* sdl;
+     sa_family_t  family;
+     char *sdlname, *haddr, *s;
+     int hlen = 0;
+     int i;
+#endif
      char           *newaddr,hwaddr[128];
      CODE:
    {
-#if !(defined(HAS_IOCTL) && defined(SIOCGIFHWADDR))
+#if !((defined(HAS_IOCTL) && defined(SIOCGIFHWADDR)) || defined(USE_GETIFADDRS))
      XSRETURN_UNDEF;
-#else
+#endif
+#if (defined(USE_GETIFADDRS) && defined(HAVE_SOCKADDR_DL_STRUCT))
+     getifaddrs(&ifap);
+
+     while(1) {
+       if (ifap == NULL) break;
+       if (strncmp(name, ifap -> ifa_name, IFNAMSIZ) == 0) {
+         family = ifap -> ifa_addr -> sa_family;
+         if (family == AF_LINK) {
+           sdl = (struct sockaddr_dl *) ifap->ifa_addr;
+           haddr = sdl->sdl_data + sdl->sdl_nlen;
+           hlen = sdl->sdl_alen;
+           break;
+         }
+       }
+       ifap = ifap -> ifa_next;
+     } 
+     freeifaddrs(ifap);
+
+     s = hwaddr; 
+     s[0] = '\0';
+     if (ifap != NULL) {
+       for (i = 0; i < hlen; i++) {
+         if (i < hlen - 1)
+           len = sprintf(s,"%02x:",(unsigned char)haddr[i]);
+         else
+           len = sprintf(s,"%02x",(unsigned char)haddr[i]);
+         s += len;
+       }
+     }
+     RETVAL = hwaddr;
+#elif (defined(HAS_IOCTL) && defined(SIOCGIFHWADDR))
      bzero((void*)&ifr,sizeof(struct ifreq));
      strncpy(ifr.ifr_name,name,IFNAMSIZ-1);
      ifr.ifr_hwaddr.sa_family = AF_UNSPEC;
@@ -587,6 +631,7 @@ if_hwaddr(sock, name, ...)
    }
    OUTPUT:
      RETVAL
+
 
 int
 if_flags(sock, name, ...)

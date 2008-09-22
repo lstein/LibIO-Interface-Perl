@@ -28,7 +28,7 @@ my @flags     = qw(IFF_ALLMULTI    IFF_AUTOMEDIA  IFF_BROADCAST
 @EXPORT = qw( );
 
 @ISA = qw(Exporter DynaLoader);
-$VERSION = '1.04';
+$VERSION = '1.05';
 
 sub AUTOLOAD {
     # This AUTOLOAD is used to 'autoload' constants from the constant()

@@ -39,6 +39,14 @@ WriteMakefile(
             $attrs{DEFINE} .= ' -DUSE_GETIFADDRS';
             print " Okay, I will use it.\n";
         }
+        print "Checking for sockaddr_dl...";
+	if (!-r "/usr/include/net/if_dl.h") {
+            print " Nope, will not use it.\n";
+        } else {
+            $attrs{DEFINE} .= ' -DHAVE_SOCKADDR_DL_STRUCT';
+            print " Okay, I will use it.\n";
+        }
+
         \%attrs;
     },
 );

@@ -1,4 +1,7 @@
 Revision history for Perl extension IO::Interface.
+1.05    Fri Jun  6 11:53:21 EDT 2008
+        Fix from Mitsuru Yoshida to compile on FreeBSD.
+
 1.04	Wed Dec 26 13:38:53 EST 2007
 	Fix from John Lightsey to avoid dmesg warnings on BSD systems.	
 
