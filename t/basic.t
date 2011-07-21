@@ -26,13 +26,15 @@ my @if = $s->if_list;
 print @if ? 'ok ': 'not ok ',3,"\n";
 
 # find loopback interface
-my $loopback;
+my @loopback;
 foreach (@if) {
 	next unless $s->if_flags($_) & IFF_UP;
-        $loopback = $_ if $s->if_flags($_) & IFF_LOOPBACK;
+	push @loopback,$_ if $s->if_flags($_) & IFF_LOOPBACK;
 }
 
-print $loopback ? 'ok ':'not ok ',4,"\n";
-print $s->if_addr($loopback) eq '127.0.0.1' ? 'ok ': 'not ok ',5,"\n";
+print @loopback ? 'ok ':'not ok ',4,"\n";
+my @local = grep {$s->if_addr($_) eq '127.0.0.1'} @loopback;
+
+print @local ? 'ok ': 'not ok ',5,"\n";
 
 

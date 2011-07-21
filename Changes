@@ -1,4 +1,7 @@
 Revision history for Perl extension IO::Interface.
+1.06    Thu Jul 21 13:40:49 EDT 2011
+        Address test 5 failure on systems with aliases on loopback.        
+
 1.05    Fri Jun  6 11:53:21 EDT 2008
         Fix from Mitsuru Yoshida to compile on FreeBSD.
 
