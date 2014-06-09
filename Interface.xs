@@ -566,7 +566,7 @@ if_hwaddr(sock, name, ...)
      IOCTL_CMD_T    operation;
      struct ifreq   ifr;
 #if (defined(USE_GETIFADDRS) && defined(HAVE_SOCKADDR_DL_STRUCT))
-     struct ifaddrs* ifap = NULL;
+     struct ifaddrs *ifap, *ifa;
      struct sockaddr_dl* sdl;
      sa_family_t  family;
      char *sdlname, *haddr, *s;
@@ -583,11 +583,11 @@ if_hwaddr(sock, name, ...)
      getifaddrs(&ifap);
 
      while(1) {
-       if (ifap == NULL) break;
-       if (strncmp(name, ifap -> ifa_name, IFNAMSIZ) == 0) {
-         family = ifap -> ifa_addr -> sa_family;
+     for (ifa = ifap; ifa; ifa = ifa->ifa_next) {
+       if (strncmp(name, ifa->ifa_name, IFNAMSIZ) == 0) {
+         family = ifa->ifa_addr->sa_family;
          if (family == AF_LINK) {
-           sdl = (struct sockaddr_dl *) ifap->ifa_addr;
+           sdl = (struct sockaddr_dl *) ifa->ifa_addr;
            haddr = sdl->sdl_data + sdl->sdl_nlen;
            hlen = sdl->sdl_alen;
            break;
@@ -608,6 +608,9 @@ if_hwaddr(sock, name, ...)
          s += len;
        }
      }
+
+     freeifaddrs(ifap);
+
      RETVAL = hwaddr;
 #elif (defined(HAS_IOCTL) && defined(SIOCGIFHWADDR))
      bzero((void*)&ifr,sizeof(struct ifreq));

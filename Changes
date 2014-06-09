@@ -1,4 +1,7 @@
 Revision history for Perl extension IO::Interface.
+1.07    Sun Jun  8 21:29:58 EDT 2014
+	Apply patch from Miolaj Kucharski to fix segfault on OpenBSD.	
+
 1.06    Thu Jul 21 13:40:49 EDT 2011
         Address test 5 failure on systems with aliases on loopback.        
 
