@@ -1,6 +1,14 @@
+/* Interface.xs: part of LibIO-Interface-Perl             */
+/* Copyright 2014 Lincoln D. Stein                        */
+/* Licensed under Perl Artistic License 2.0               */
+/* Please see LICENSE and README.md for more information. */
+
 #include "EXTERN.h"
 #include "perl.h"
 #include "XSUB.h"
+
+#include <stdio.h>
+#include <string.h>
 
 /* socket definitions */
 #include <sys/types.h>
@@ -511,6 +519,9 @@ if_netmask(sock, name, ...)
 	  operation = SIOCGIFNETMASK;
      }
      if (!Ioctl(sock,operation,&ifr)) XSRETURN_UNDEF;
+#if defined(__NetBSD__) || defined(__OpenBSD__)
+     ifr.ifr_addr.sa_family = AF_INET;
+#endif
      if (ifr.ifr_addr.sa_family != AF_INET) croak ("Address is not in the AF_INET family.\n");
      RETVAL = inet_ntoa(((struct sockaddr_in*) &ifr.ifr_addr)->sin_addr);
 #endif
@@ -582,7 +593,6 @@ if_hwaddr(sock, name, ...)
 #if (defined(USE_GETIFADDRS) && defined(HAVE_SOCKADDR_DL_STRUCT))
      getifaddrs(&ifap);
 
-     while(1) {
      for (ifa = ifap; ifa; ifa = ifa->ifa_next) {
        if (strncmp(name, ifa->ifa_name, IFNAMSIZ) == 0) {
          family = ifa->ifa_addr->sa_family;
@@ -593,9 +603,7 @@ if_hwaddr(sock, name, ...)
            break;
          }
        }
-       ifap = ifap -> ifa_next;
      } 
-     freeifaddrs(ifap);
 
      s = hwaddr; 
      s[0] = '\0';

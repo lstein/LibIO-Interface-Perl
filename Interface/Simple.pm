@@ -267,9 +267,17 @@ operating system may not let you set some of these.
 
 =head1 AUTHOR
 
-Lincoln Stein E<lt>lstein@cshl.orgE<gt>
+Lincoln D. Stein <lincoln.stein@gmail.com>
+Copyright 2001-2014, Lincoln D. Stein.
 
-This module is distributed under the same license as Perl itself.
+This library is distributed under the Perl Artistic License
+2.0. Please see LICENSE for more information.
+
+=head1 SUPPORT
+
+For feature requests, bug reports and code contributions, please use
+the GitHub repository at
+https://github.com/lstein/LibIO-Interface-Perl
 
 =head1 SEE ALSO
 
