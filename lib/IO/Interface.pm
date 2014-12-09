@@ -9,7 +9,6 @@ use IO::Socket;
 
 require Exporter;
 require DynaLoader;
-use AutoLoader;
 
 my @functions = qw(if_addr if_broadcast if_netmask if_dstaddr if_hwaddr if_flags if_list if_mtu if_metric
 		   addr_to_interface if_index if_indextoname );
@@ -28,7 +27,7 @@ my @flags     = qw(IFF_ALLMULTI    IFF_AUTOMEDIA  IFF_BROADCAST
 @EXPORT = qw( );
 
 @ISA = qw(Exporter DynaLoader);
-$VERSION = '1.08';
+$VERSION = '1.09';
 
 sub AUTOLOAD {
     # This AUTOLOAD is used to 'autoload' constants from the constant()
