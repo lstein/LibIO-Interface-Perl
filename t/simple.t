@@ -28,6 +28,7 @@ ok($loopback->netmask eq '255.0.0.0','loopback netmask');
 SKIP: {
   my $index = $loopback->index;
   skip ('index not implemented on this platform',3) unless defined $index;
+  skip ('FreeBSD jail has no 127.0.0.1') if ( $^O eq "freebsd" and qx(sysctl security.jail.jailed) =~ m{1} );
 
   ok(defined $index,'loopback index');
 
