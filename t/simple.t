@@ -27,7 +27,7 @@ ok($loopback,"loopback device");
 
 SKIP: {
   my $index = $loopback->index;
-  skip ('index not implemented on this platform',3) unless defined $index;
+  skip ('index not implemented on this platform',5) unless defined $index;
   ok($loopback->address eq '127.0.0.1','loopback address');
   ok($loopback->netmask eq '255.0.0.0','loopback netmask');
 
