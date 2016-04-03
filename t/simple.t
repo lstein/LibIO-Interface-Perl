@@ -22,13 +22,14 @@ foreach (@if) {
 }
 
 ok($loopback,"loopback device");
-ok($loopback->address eq '127.0.0.1','loopback address');
-ok($loopback->netmask eq '255.0.0.0','loopback netmask');
+
+#  skip ('FreeBSD jail has no 127.0.0.1') if ( $^O eq "freebsd" and qx(sysctl security.jail.jailed) =~ m{1} );
 
 SKIP: {
   my $index = $loopback->index;
   skip ('index not implemented on this platform',3) unless defined $index;
-  skip ('FreeBSD jail has no 127.0.0.1') if ( $^O eq "freebsd" and qx(sysctl security.jail.jailed) =~ m{1} );
+  ok($loopback->address eq '127.0.0.1','loopback address');
+  ok($loopback->netmask eq '255.0.0.0','loopback netmask');
 
   ok(defined $index,'loopback index');
 
