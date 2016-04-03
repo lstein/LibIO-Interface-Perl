@@ -33,8 +33,11 @@ foreach (@if) {
 }
 
 print @loopback ? 'ok ':'not ok ',4,"\n";
+
+my $SKIPPED = ( $^O eq "freebsd" and qx(sysctl security.jail.jailed) =~ m{1} ) ? " # skip FreeBSD jail has no 127.0.0.1" : "";
+
 my @local = grep {$s->if_addr($_) eq '127.0.0.1'} @loopback;
 
-print @local ? 'ok ': 'not ok ',5,"\n";
+print @local ? 'ok ': 'not ok ',5,"$SKIPPED\n";
 
 
