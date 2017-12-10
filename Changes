@@ -1,4 +1,8 @@
 Revision history for Perl extension IO::Interface.
+
+1.10	Sun Dec 10 15:54:57 GMT 2017
+        -Fix build flags after switching to Module::Build
+
 1.09    Tue Dec  9 11:22:56 EST 2014
 	-Converted to use Module::Build
 
